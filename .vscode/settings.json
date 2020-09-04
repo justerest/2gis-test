@@ -1,0 +1,6 @@
+{
+	"cSpell.words": [
+		"mapgl"
+	],
+	"typescript.tsdk": "node_modules/typescript/lib"
+}
