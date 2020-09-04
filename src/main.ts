@@ -1,14 +1,8 @@
 import { load } from '@2gis/mapgl';
 import { fromEvent } from 'rxjs';
-import {
-	debounceTime,
-	distinctUntilChanged,
-	map,
-	pairwise,
-	startWith,
-	switchMap,
-} from 'rxjs/operators';
+import { pairwise, startWith } from 'rxjs/operators';
 import { MarkersApi, MarkerFactory } from './MarkersApi';
+import { MarkersState } from './MarkersState';
 
 async function main() {
 	const mapglAPI = await load();
@@ -19,26 +13,20 @@ async function main() {
 		key: '6aa7363e-cb3a-11ea-b2e4-f71ddc0b6dcb',
 	});
 
-	const searchApi = new MarkersApi(
-		new MarkerFactory((coordinates) => new mapglAPI.Marker(mapgl, { coordinates })),
+	const markersState = new MarkersState(
+		new MarkersApi(new MarkerFactory((coordinates) => new mapglAPI.Marker(mapgl, { coordinates }))),
 	);
+
+	markersState.markers.pipe(startWith([]), pairwise()).subscribe(([oldMarkers, markers]) => {
+		// TODO: обновлять только изменившиеся маркеры
+		oldMarkers.forEach((marker) => marker.destroy());
+		markers.forEach((marker) => marker.show());
+	});
 
 	const searchInput = document.getElementById('search-input') as HTMLInputElement;
 	fromEvent(searchInput, 'input')
-		.pipe(
-			startWith(0),
-			map(() => searchInput.value.trim()),
-			debounceTime(500),
-			distinctUntilChanged(),
-			switchMap((term) => searchApi.search(term)),
-			startWith([]),
-			pairwise(),
-		)
-		.subscribe(([oldMarkers, markers]) => {
-			// TODO: обновлять только изменившиеся маркеры
-			oldMarkers.forEach((marker) => marker.destroy());
-			markers.forEach((marker) => marker.show());
-		});
+		.pipe(startWith(0))
+		.subscribe(() => markersState.search(searchInput.value.trim()));
 }
 
 main();

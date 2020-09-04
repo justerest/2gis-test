@@ -11,7 +11,7 @@ export class MarkersApi {
 
 	search(term: string): Observable<Marker[]> {
 		return fromFetch(
-			`https://catalog.api.2gis.ru/3.0/markers?q=${term}&page_size=100&region_id=32&key=ruhebf8058`,
+			`https://catalog.api.2gis.ru/3.0/markers?q=${term}&page_size=1000&region_id=32&key=ruhebf8058`,
 		).pipe(
 			switchMap((response) => response.json()),
 			map(
