@@ -5,14 +5,14 @@ import { MarkerFactory } from './MarkerFactory';
 import { MarkersState } from './MarkersState';
 import { CoordinatesApi2Gis } from './CoordinatesApi2Gis';
 import { Marker } from './Marker';
-import { OptimizedCoordinatesApi } from './OptimizedCoordinatesApi';
-import { DensityPointsFilter } from './DensityPointsFilter';
-import { CellMap } from './CellMap';
-import { Rectangle } from './Rectangle';
-import { Point } from './Point';
+import { FilteredCoordinatesApi } from './FilteredCoordinatesApi';
+import { DensityPointsFilter } from './filters/DensityPointsFilter';
+import { CellMap } from './filters/CellMap';
+import { Rectangle } from './filters/Rectangle';
+import { Point } from './filters/Point';
 import { Coordinates } from './Coordinates';
-import { CombinedPointsFilter } from './CombinedPointsFilter';
-import { BoundsPointsFilter } from './BoundsPointsFilter';
+import { CombinedPointsFilter } from './filters/CombinedPointsFilter';
+import { BoundsPointsFilter } from './filters/BoundsPointsFilter';
 import { MarkersRenderer } from './MarkersRenderer';
 
 main();
@@ -44,7 +44,7 @@ async function main() {
 	});
 
 	const markersState = new MarkersState(
-		new OptimizedCoordinatesApi(
+		new FilteredCoordinatesApi(
 			new CoordinatesApi2Gis(),
 			combineLatest([bounds$, zoom$]).pipe(
 				map(([bound, zoom]) => {

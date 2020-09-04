@@ -1,11 +1,11 @@
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { PointsFilter } from './PointsFilter';
+import { PointsFilter } from './filters/PointsFilter';
 import { CoordinatesApi } from './CoordinatesApi';
 import { Coordinates } from './Coordinates';
-import { Point } from './Point';
+import { Point } from './filters/Point';
 
-export class OptimizedCoordinatesApi implements CoordinatesApi {
+export class FilteredCoordinatesApi implements CoordinatesApi {
 	constructor(
 		private coordinatesApi: CoordinatesApi,
 		private pointsFilter$: Observable<PointsFilter>,
