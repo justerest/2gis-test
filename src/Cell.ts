@@ -1,7 +1,6 @@
 import { Point } from './Point';
-import { Hashable } from './utils/Hashable';
 
-export class Cell implements Hashable {
+export class Cell {
 	constructor(private center: Point) {}
 
 	getClosestToCenter(...points: [Point, ...Point[]]): Point {

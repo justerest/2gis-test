@@ -1,13 +1,19 @@
 import { load } from '@2gis/mapgl';
-import { fromEvent, Observable } from 'rxjs';
-import { map, pairwise, startWith } from 'rxjs/operators';
+import { combineLatest, fromEvent, Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { MarkerFactory } from './MarkerFactory';
 import { MarkersState } from './MarkersState';
 import { CoordinatesApi2Gis } from './CoordinatesApi2Gis';
 import { Marker } from './Marker';
 import { OptimizedCoordinatesApi } from './OptimizedCoordinatesApi';
-import { PointsFilter } from './PointsFilter';
+import { DensityPointsFilter } from './DensityPointsFilter';
 import { CellMap } from './CellMap';
+import { Rectangle } from './Rectangle';
+import { Point } from './Point';
+import { Coordinates } from './Coordinates';
+import { CombinedPointsFilter } from './CombinedPointsFilter';
+import { BoundsPointsFilter } from './BoundsPointsFilter';
+import { MarkersRenderer } from './MarkersRenderer';
 
 main();
 
@@ -25,10 +31,30 @@ async function main() {
 		mapgl.on('zoomend', () => subscriber.next(mapgl.getZoom()));
 	});
 
+	const bounds$ = new Observable<Rectangle>((subscriber) => {
+		const getRect = () => {
+			const bounds = mapgl.getBounds();
+			return new Rectangle(
+				new Point(bounds.southWest as Coordinates),
+				new Point(bounds.northEast as Coordinates),
+			);
+		};
+		subscriber.next(getRect());
+		mapgl.on('moveend', () => subscriber.next(getRect()));
+	});
+
 	const markersState = new MarkersState(
 		new OptimizedCoordinatesApi(
 			new CoordinatesApi2Gis(),
-			zoom$.pipe(map((zoom) => new PointsFilter(new CellMap(75 / 2 ** zoom)))),
+			combineLatest([bounds$, zoom$]).pipe(
+				map(([bound, zoom]) => {
+					const k = 75 / 2 ** zoom;
+					return new CombinedPointsFilter([
+						new BoundsPointsFilter(bound),
+						new DensityPointsFilter(new CellMap(k, 1.2 * k)),
+					]);
+				}),
+			),
 		),
 		new MarkerFactory((coordinates) => new mapglAPI.Marker(mapgl, { coordinates })),
 	);
@@ -38,11 +64,8 @@ async function main() {
 }
 
 function renderMarkersOnChanges(markers: Observable<Marker[]>) {
-	markers.pipe(startWith([]), pairwise()).subscribe(([oldMarkers, actualMarkers]) => {
-		// TODO: обновлять только изменившиеся маркеры
-		oldMarkers.forEach((marker) => marker.destroy());
-		actualMarkers.forEach((marker) => marker.show());
-	});
+	const renderer = new MarkersRenderer();
+	markers.subscribe((markers) => renderer.render(markers));
 }
 
 function searchMarkersOnInput(searchInput: HTMLInputElement, markersState: MarkersState) {

@@ -6,6 +6,6 @@ export class MarkerFactory {
 	constructor(private createMarker2Gis: (coordinates: Coordinates) => Marker2Gis) {}
 
 	create(coordinates: Coordinates): Marker {
-		return new Marker(() => this.createMarker2Gis(coordinates));
+		return new Marker(coordinates, this.createMarker2Gis);
 	}
 }

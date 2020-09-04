@@ -1,12 +1,7 @@
 import { Coordinates } from './Coordinates';
-import { Hashable } from './utils/Hashable';
 
-export class Point implements Hashable {
+export class Point {
 	constructor(private coordinates: Coordinates) {}
-
-	hash(): string {
-		return this.coordinates.join(';');
-	}
 
 	getDistance(point: Point): number {
 		const dx = this.coordinates[0] - point.getCoordinates()[0];
@@ -16,5 +11,9 @@ export class Point implements Hashable {
 
 	getCoordinates(): Coordinates {
 		return this.coordinates;
+	}
+
+	hash(): string {
+		return this.coordinates.join(';');
 	}
 }
