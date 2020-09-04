@@ -45,7 +45,7 @@ function getProdPlugins(): Plugin[] {
 		new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
 		// new CopyPlugin({ patterns: [{ from: 'public' }] }),
 		new HtmlWebpackPlugin({
-			template: resolve(__dirname, 'src/index.prod.html'),
+			template: resolve(__dirname, 'src/index.html'),
 			minify: { removeComments: true, collapseWhitespace: true },
 		}),
 		new MiniCssExtractPlugin(),
