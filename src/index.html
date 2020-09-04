@@ -24,18 +24,26 @@
 		}
 
 		#search-input {
-			position: fixed;
-			top: 24px;
-			left: 24px;
 			width: 200px;
 			height: 24px;
 			font-size: 20px;
 			border: none;
 		}
+
+		.search-container {
+			position: fixed;
+			display: flex;
+			align-items: stretch;
+			top: 24px;
+			left: 24px;
+		}
 	</style>
 
 	<body>
 		<div id="container"></div>
-		<input id="search-input" type="search" />
+		<div class="search-container">
+			<input id="search-input" type="search" />
+			<button>🔎</button>
+		</div>
 	</body>
 </html>
