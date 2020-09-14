@@ -17,9 +17,9 @@ describe(DensityPointsFilter.name, () => {
 		});
 
 		it('should skip middle point', () => {
-			const densityPointsFilter = new DensityPointsFilter(new CellMap(1.7));
-			const points = [new Point([0, 0]), new Point([2, 0]), new Point([3, 0])];
-			expect(densityPointsFilter.filter(points)).toEqual([new Point([0, 0]), new Point([3, 0])]);
+			const densityPointsFilter = new DensityPointsFilter(new CellMap(2));
+			const points = [new Point([1, 0]), new Point([2, 0]), new Point([3, 0])];
+			expect(densityPointsFilter.filter(points)).toEqual([new Point([1, 0]), new Point([3, 0])]);
 		});
 	});
 });
