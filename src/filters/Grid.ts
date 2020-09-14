@@ -8,14 +8,12 @@ export class Grid {
 
 	addPoint(point: Point): void {
 		const cell = this.cellMap.get(point);
-		const existingPoint = this.pointMap.get(cell.hash());
-		this.pointMap.set(
-			cell.hash(),
-			existingPoint ? cell.getClosestToCenter(existingPoint, point) : point,
-		);
+		if (!this.pointMap.has(cell.hash())) {
+			this.pointMap.set(cell.hash(), point);
+		}
 	}
 
-	getFilteredPoints(): Point[] {
+	getCenterPoints(): Point[] {
 		return Array.from(this.pointMap.values());
 	}
 }

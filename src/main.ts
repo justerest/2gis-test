@@ -48,10 +48,12 @@ async function main() {
 			new CoordinatesApi2Gis(),
 			combineLatest([bounds$, zoom$]).pipe(
 				map(([bound, zoom]) => {
-					const k = 75 / 2 ** zoom;
+					const stepX = 70 / 2 ** zoom;
+					const stepY = 1.5 * stepX;
 					return new CombinedPointsFilter([
 						new BoundsPointsFilter(bound),
-						new DensityPointsFilter(new CellMap(k, 1.2 * k)),
+						new DensityPointsFilter(new CellMap(stepX, stepY)),
+						new DensityPointsFilter(new CellMap(stepX, stepY, 0.5 * stepX, 0.5 * stepY)),
 					]);
 				}),
 			),
